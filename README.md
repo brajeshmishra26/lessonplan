@@ -2,6 +2,17 @@
 
 A simple web-based lesson plan management system that allows teachers to view and download lesson plans based on class and chapter selection.
 
+## 🌐 **GitHub Repository**
+**Repository URL**: https://github.com/brajeshmishra26/lessonplan.git
+
+## 🚀 **Quick Start**
+```bash
+git clone https://github.com/brajeshmishra26/lessonplan.git
+cd lessonplan
+pip install -r requirements.txt
+python app.py
+```
+
 ## Features
 
 - **Class & Chapter Selection**: Easy dropdown selection interface
