@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Print: Lesson Plan - Class {{ lesson.class_num }} Chapter {{ lesson.chapter_num }}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            line-height: 1.6;
+            background: white;
+            color: black;
+        }
+        .lesson-plan-container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .header {
+            text-align: center;
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 30px;
+            text-decoration: underline;
+            color: #2c3e50;
+        }
+        .basic-info {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            border: 2px solid #ddd;
+        }
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        .info-item {
+            font-weight: 500;
+        }
+        .section {
+            margin-bottom: 25px;
+            border: 2px solid #333;
+            border-radius: 8px;
+            overflow: hidden;
+            page-break-inside: avoid;
+        }
+        .section-title {
+            font-weight: bold;
+            font-size: 18px;
+            background: #333;
+            color: white;
+            padding: 12px 15px;
+            margin: 0;
+        }
+        .section-content {
+            padding: 20px;
+            background: white;
+        }
+        .section-content ul {
+            margin: 0;
+            padding-left: 20px;
+        }
+        .section-content li {
+            margin-bottom: 8px;
+            line-height: 1.6;
+        }
+        .footer-info {
+            text-align: right;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px solid #333;
+        }
+        .no-print {
+            background: #e3f2fd;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border: 2px solid #2196f3;
+        }
+        
+        /* Print optimizations */
+        @media print {
+            .no-print {
+                display: none !important;
+            }
+            body { 
+                margin: 0; 
+                background: white !important;
+                -webkit-print-color-adjust: exact;
+                color-adjust: exact;
+            }
+            .section {
+                page-break-inside: avoid;
+                margin-bottom: 15px;
+            }
+            .section-title {
+                background: #333 !important;
+                color: white !important;
+                -webkit-print-color-adjust: exact;
+                color-adjust: exact;
+            }
+        }
+        
+        @page {
+            margin: 1in;
+            size: A4;
+        }
+    </style>
+</head>
+<body>
+    <div class="no-print">
+        <div style="text-align: center;">
+            <h4>🖨️ Print-Optimized Lesson Plan</h4>
+            <p>This page will automatically attempt to print. If not, use the buttons below:</p>
+            <button onclick="window.print()" style="padding: 10px 20px; background: #28a745; color: white; border: none; border-radius: 5px; margin: 5px; cursor: pointer;">
+                🖨️ Print Now
+            </button>
+            <button onclick="window.close()" style="padding: 10px 20px; background: #6c757d; color: white; border: none; border-radius: 5px; margin: 5px; cursor: pointer;">
+                ❌ Close
+            </button>
+            <a href="/lesson_plan/{{ lesson.class_num }}/{{ lesson.chapter_num }}" style="padding: 10px 20px; background: #007bff; color: white; text-decoration: none; border-radius: 5px; margin: 5px; display: inline-block;">
+                🔙 Back to Lesson Plan
+            </a>
+        </div>
+    </div>
+
+    <div class="lesson-plan-container">
+        <div class="header">LESSON PLAN</div>
+        
+        <div class="basic-info">
+            <div class="info-grid">
+                <div class="info-item"><strong>Class:</strong> {{ lesson.class_num }}th</div>
+                <div class="info-item"><strong>Month:</strong> {{ lesson.month }}</div>
+                <div class="info-item"><strong>Year:</strong> {{ lesson.year }}</div>
+                <div class="info-item"><strong>Subject:</strong> {{ lesson.subject }}</div>
+            </div>
+            <div style="margin-top: 15px;">
+                <div class="info-item"><strong>Unit:</strong> {{ lesson.unit }}</div>
+                <div class="info-item"><strong>Topic:</strong> {{ lesson.chapter_title }}</div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h3 class="section-title">Learning Outcomes (शिक्षण उद्देश्य)</h3>
+            <div class="section-content">
+                <ul>
+                    {% for outcome in lesson.learning_outcomes.split('\n') %}
+                        {% if outcome.strip() %}
+                            <li>{{ outcome.strip() }}</li>
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+
+        <div class="section">
+            <h3 class="section-title">Teaching Points (शिक्षण बिंदु)</h3>
+            <div class="section-content">
+                <ul>
+                    {% for point in lesson.teaching_points.split('\n') %}
+                        {% if point.strip() %}
+                            <li>{{ point.strip() }}</li>
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+
+        <div class="section">
+            <h3 class="section-title">Teaching Aids (शिक्षण सहायक सामग्री)</h3>
+            <div class="section-content">
+                <ul>
+                    {% for aid in lesson.teaching_aids.split('\n') %}
+                        {% if aid.strip() %}
+                            <li>{{ aid.strip() }}</li>
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+
+        <div class="section">
+            <h3 class="section-title">Teaching Methodology (शिक्षण विधि)</h3>
+            <div class="section-content">
+                <ul>
+                    {% for method in lesson.teaching_methodology.split('\n') %}
+                        {% if method.strip() %}
+                            <li>{{ method.strip() }}</li>
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+
+        <div class="section">
+            <h3 class="section-title">Activity Planned (नियोजित गतिविधि)</h3>
+            <div class="section-content">
+                <ul>
+                    <li>{{ lesson.activity_planned }}</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="section">
+            <h3 class="section-title">Learning Skill Practice (अधिगम कौशल अभ्यास)</h3>
+            <div class="section-content">
+                <ul>
+                    {% for skill in lesson.learning_skill_practice.split('\n') %}
+                        {% if skill.strip() %}
+                            <li>{{ skill.strip() }}</li>
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+
+        <div class="section">
+            <h3 class="section-title">Life Skill Learnt (जीवन कौशल)</h3>
+            <div class="section-content">
+                <ul>
+                    <li>{{ lesson.life_skill_learnt }}</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="section">
+            <h3 class="section-title">Assignment Planned (गृहकार्य)</h3>
+            <div class="section-content">
+                <ul>
+                    <li>{{ lesson.assignment_planned }}</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="section">
+            <h3 class="section-title">Assessment Planned (मूल्यांकन योजना)</h3>
+            <div class="section-content">
+                <ul>
+                    {% for assessment in lesson.assessment_planned.split('\n') %}
+                        {% if assessment.strip() %}
+                            <li>{{ assessment.strip() }}</li>
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+
+        <div class="footer-info">
+            <p><strong>तैयारकर्ता:</strong> [शिक्षक का नाम]</p>
+            <p><strong>दिनांक:</strong> {{ lesson.created_at.split(' ')[0] if lesson.created_at else 'आज की तारीख' }}</p>
+        </div>
+    </div>
+
+    <script>
+        console.log('Print page loaded');
+        
+        // Auto-print after page loads
+        window.addEventListener('load', function() {
+            console.log('Page fully loaded, attempting auto-print');
+            setTimeout(function() {
+                try {
+                    window.print();
+                    console.log('Auto-print triggered');
+                } catch (e) {
+                    console.error('Auto-print failed:', e);
+                }
+            }, 1000);
+        });
+        
+        // Manual print function
+        function manualPrint() {
+            console.log('Manual print called');
+            try {
+                window.print();
+            } catch (e) {
+                console.error('Manual print failed:', e);
+                alert('Print failed: ' + e.message);
+            }
+        }
+        
+        // Handle print keyboard shortcut
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey && e.key === 'p') {
+                e.preventDefault();
+                manualPrint();
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lesson Plan Management System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card shadow">
+                    <div class="card-header bg-primary text-white text-center">
+                        <h2>📚 Lesson Plan Management System</h2>
+                        <p class="mb-0">Select Class and Chapter to View or Download Lesson Plan</p>
+                    </div>
+                    <div class="card-body">
+                        <form id="lessonPlanForm">
+                            <div class="row mb-4">
+                                <div class="col-md-6">
+                                    <label for="class" class="form-label">
+                                        <i class="fas fa-graduation-cap"></i> Select Class:
+                                    </label>
+                                    <select class="form-select" id="class" name="class" required>
+                                        <option value="">Choose Class...</option>
+                                        <option value="1">Class 1st</option>
+                                        <option value="2">Class 2nd</option>
+                                        <option value="3">Class 3rd</option>
+                                        <option value="4">Class 4th</option>
+                                        <option value="5">Class 5th</option>
+                                        <option value="6">Class 6th</option>
+                                        <option value="7">Class 7th</option>
+                                        <option value="8">Class 8th</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="chapter" class="form-label">
+                                        <i class="fas fa-book"></i> Select Chapter:
+                                    </label>
+                                    <select class="form-select" id="chapter" name="chapter" required disabled>
+                                        <option value="">First select a class...</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div class="row">
+                                <div class="col-md-6 mb-3">
+                                    <button type="button" id="viewBtn" class="btn btn-success btn-lg w-100" disabled>
+                                        <i class="fas fa-eye"></i> View Lesson Plan
+                                    </button>
+                                </div>
+                                <div class="col-md-6 mb-3">
+                                    <button type="button" id="downloadBtn" class="btn btn-primary btn-lg w-100" disabled>
+                                        <i class="fas fa-download"></i> Download DOCX
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                        
+                        <div class="alert alert-info mt-4">
+                            <h6><i class="fas fa-info-circle"></i> Instructions:</h6>
+                            <ul class="mb-0">
+                                <li>Select your desired class from the dropdown</li>
+                                <li>Choose the chapter you want to access</li>
+                                <li>Click <strong>"View"</strong> to see the lesson plan in browser</li>
+                                <li>Click <strong>"Download"</strong> to get the DOCX file</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Available Lesson Plans -->
+                <div class="card shadow mt-4">
+                    <div class="card-header bg-secondary text-white">
+                        <h5><i class="fas fa-list"></i> Available Lesson Plans</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Class</th>
+                                        <th>Subject</th>
+                                        <th>Chapter</th>
+                                        <th>Title</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>5th</td>
+                                        <td>Hindi (रिमझिम)</td>
+                                        <td>8</td>
+                                        <td>वे दिन भी क्या दिन थे (विज्ञान कथा)</td>
+                                        <td>
+                                            <a href="/lesson_plan/5/8" class="btn btn-sm btn-success me-2">View</a>
+                                            <a href="/download/5/8" class="btn btn-sm btn-primary">Download</a>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const classSelect = document.getElementById('class');
+            const chapterSelect = document.getElementById('chapter');
+            const viewBtn = document.getElementById('viewBtn');
+            const downloadBtn = document.getElementById('downloadBtn');
+
+            classSelect.addEventListener('change', function() {
+                const selectedClass = this.value;
+                
+                if (selectedClass) {
+                    // Enable chapter dropdown
+                    chapterSelect.disabled = false;
+                    chapterSelect.innerHTML = '<option value="">Loading...</option>';
+                    
+                    // Fetch chapters for selected class
+                    fetch(`/get_chapters/${selectedClass}`)
+                        .then(response => response.json())
+                        .then(chapters => {
+                            chapterSelect.innerHTML = '<option value="">Choose Chapter...</option>';
+                            chapters.forEach(chapter => {
+                                const option = document.createElement('option');
+                                option.value = chapter.chapter_num;
+                                option.textContent = `Chapter ${chapter.chapter_num}: ${chapter.chapter_title}`;
+                                chapterSelect.appendChild(option);
+                            });
+                        })
+                        .catch(error => {
+                            console.error('Error fetching chapters:', error);
+                            chapterSelect.innerHTML = '<option value="">Error loading chapters</option>';
+                        });
+                } else {
+                    chapterSelect.disabled = true;
+                    chapterSelect.innerHTML = '<option value="">First select a class...</option>';
+                    viewBtn.disabled = true;
+                    downloadBtn.disabled = true;
+                }
+            });
+
+            chapterSelect.addEventListener('change', function() {
+                const hasSelection = classSelect.value && chapterSelect.value;
+                viewBtn.disabled = !hasSelection;
+                downloadBtn.disabled = !hasSelection;
+            });
+
+            viewBtn.addEventListener('click', function() {
+                const classNum = classSelect.value;
+                const chapterNum = chapterSelect.value;
+                
+                if (classNum && chapterNum) {
+                    window.open(`/lesson_plan/${classNum}/${chapterNum}`, '_blank');
+                }
+            });
+
+            downloadBtn.addEventListener('click', function() {
+                const classNum = classSelect.value;
+                const chapterNum = chapterSelect.value;
+                
+                if (classNum && chapterNum) {
+                    window.location.href = `/download/${classNum}/${chapterNum}`;
+                }
+            });
+        });
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script>
+</body>
+</html>

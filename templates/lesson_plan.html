@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lesson Plan - Class {{ lesson.class_num }} Chapter {{ lesson.chapter_num }}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            line-height: 1.6;
+            background-color: #f8f9fa;
+        }
+        .lesson-plan-container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .header {
+            text-align: center;
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 30px;
+            text-decoration: underline;
+            color: #2c3e50;
+        }
+        .basic-info {
+            background: #e3f2fd;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            border-left: 5px solid #2196f3;
+        }
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        .info-item {
+            font-weight: 500;
+        }
+        .section {
+            margin-bottom: 25px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .section-title {
+            font-weight: bold;
+            font-size: 18px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 12px 15px;
+            margin: 0;
+        }
+        .section-content {
+            padding: 20px;
+            background: white;
+        }
+        .section-content ul {
+            margin: 0;
+            padding-left: 20px;
+        }
+        .section-content li {
+            margin-bottom: 8px;
+            line-height: 1.6;
+        }
+        .footer-info {
+            text-align: right;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px solid #eee;
+            color: #666;
+        }
+        .action-buttons {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .btn-custom {
+            margin: 0 10px;
+            padding: 10px 25px;
+        }
+        @media print {
+            .action-buttons {
+                display: none;
+            }
+            body {
+                background: white;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="action-buttons">
+        <button id="printBtn" class="btn btn-success btn-custom">
+            <i class="fas fa-print"></i> Print (JS)
+        </button>
+        <button onclick="window.print()" class="btn btn-info btn-custom">
+            <i class="fas fa-print"></i> Print (Direct)
+        </button>
+        <button onclick="testPrint()" class="btn btn-warning btn-custom">
+            <i class="fas fa-print"></i> Test Print
+        </button>
+        <a href="/print/{{ lesson.class_num }}/{{ lesson.chapter_num }}" target="_blank" class="btn btn-success btn-custom">
+            <i class="fas fa-external-link-alt"></i> Open Print Version
+        </a>
+        <a href="/download/{{ lesson.class_num }}/{{ lesson.chapter_num }}" class="btn btn-primary btn-custom">
+            <i class="fas fa-download"></i> Download DOCX
+        </a>
+        <a href="/" class="btn btn-secondary btn-custom">
+            <i class="fas fa-arrow-left"></i> Back to Home
+        </a>
+    </div>
+    
+    <div class="alert alert-info no-print mt-3">
+        <h6><i class="fas fa-info-circle"></i> Print Instructions:</h6>
+        <ul class="mb-0">
+            <li><strong>🖨️ Method 1:</strong> Click any print button above</li>
+            <li><strong>⌨️ Method 2:</strong> Press <kbd>Ctrl+P</kbd> on your keyboard</li>
+            <li><strong>🖱️ Method 3:</strong> Right-click anywhere → Print</li>
+            <li><strong>🌐 Method 4:</strong> Click "Open Print Version" to open in your default browser</li>
+            <li><strong>🔧 Troubleshooting:</strong> If print dialog doesn't appear in VS Code, the buttons opened your default browser automatically</li>
+        </ul>
+        <div class="mt-2 p-2" style="background: #fff3cd; border-radius: 5px; border-left: 4px solid #ffc107;">
+            <small><strong>Note:</strong> VS Code's integrated browser may have print restrictions. For best results, the system automatically opens your default browser when you click print buttons.</small>
+        </div>
+    </div>
+
+    <div class="lesson-plan-container">
+        <div class="header">LESSON PLAN</div>
+        
+        <div class="basic-info">
+            <div class="info-grid">
+                <div class="info-item"><strong>Class:</strong> {{ lesson.class_num }}th</div>
+                <div class="info-item"><strong>Month:</strong> {{ lesson.month }}</div>
+                <div class="info-item"><strong>Year:</strong> {{ lesson.year }}</div>
+                <div class="info-item"><strong>Subject:</strong> {{ lesson.subject }}</div>
+            </div>
+            <div style="margin-top: 15px;">
+                <div class="info-item"><strong>Unit:</strong> {{ lesson.unit }}</div>
+                <div class="info-item"><strong>Topic:</strong> {{ lesson.chapter_title }}</div>
+            </div>
+        </div>
+
+        <div class="section">
+            <h3 class="section-title">Learning Outcomes (शिक्षण उद्देश्य)</h3>
+            <div class="section-content">
+                <ul>
+                    {% for outcome in lesson.learning_outcomes.split('\n') %}
+                        {% if outcome.strip() %}
+                            <li>{{ outcome.strip() }}</li>
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+
+        <div class="section">
+            <h3 class="section-title">Teaching Points (शिक्षण बिंदु)</h3>
+            <div class="section-content">
+                <ul>
+                    {% for point in lesson.teaching_points.split('\n') %}
+                        {% if point.strip() %}
+                            <li>{{ point.strip() }}</li>
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+
+        <div class="section">
+            <h3 class="section-title">Teaching Aids (शिक्षण सहायक सामग्री)</h3>
+            <div class="section-content">
+                <ul>
+                    {% for aid in lesson.teaching_aids.split('\n') %}
+                        {% if aid.strip() %}
+                            <li>{{ aid.strip() }}</li>
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+
+        <div class="section">
+            <h3 class="section-title">Teaching Methodology (शिक्षण विधि)</h3>
+            <div class="section-content">
+                <ul>
+                    {% for method in lesson.teaching_methodology.split('\n') %}
+                        {% if method.strip() %}
+                            <li>{{ method.strip() }}</li>
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+
+        <div class="section">
+            <h3 class="section-title">Activity Planned (नियोजित गतिविधि)</h3>
+            <div class="section-content">
+                <ul>
+                    <li>{{ lesson.activity_planned }}</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="section">
+            <h3 class="section-title">Learning Skill Practice (अधिगम कौशल अभ्यास)</h3>
+            <div class="section-content">
+                <ul>
+                    {% for skill in lesson.learning_skill_practice.split('\n') %}
+                        {% if skill.strip() %}
+                            <li>{{ skill.strip() }}</li>
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+
+        <div class="section">
+            <h3 class="section-title">Life Skill Learnt (जीवन कौशल)</h3>
+            <div class="section-content">
+                <ul>
+                    <li>{{ lesson.life_skill_learnt }}</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="section">
+            <h3 class="section-title">Assignment Planned (गृहकार्य)</h3>
+            <div class="section-content">
+                <ul>
+                    <li>{{ lesson.assignment_planned }}</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="section">
+            <h3 class="section-title">Assessment Planned (मूल्यांकन योजना)</h3>
+            <div class="section-content">
+                <ul>
+                    {% for assessment in lesson.assessment_planned.split('\n') %}
+                        {% if assessment.strip() %}
+                            <li>{{ assessment.strip() }}</li>
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+
+        <div class="footer-info">
+            <p><strong>तैयारकर्ता:</strong> [शिक्षक का नाम]</p>
+            <p><strong>दिनांक:</strong> {{ lesson.created_at.split(' ')[0] if lesson.created_at else 'आज की तारीख' }}</p>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script>
+    <script>
+        // Detect browser environment
+        function detectBrowser() {
+            const userAgent = navigator.userAgent.toLowerCase();
+            console.log('User Agent:', userAgent);
+            console.log('Is VS Code Browser:', userAgent.includes('vscode'));
+            console.log('Can Print:', typeof window.print === 'function');
+            return {
+                isVSCode: userAgent.includes('vscode'),
+                canPrint: typeof window.print === 'function',
+                userAgent: userAgent
+            };
+        }
+        
+        // Enhanced print function with better error handling
+        function printPage() {
+            console.log('=== Print Function Called ===');
+            const browserInfo = detectBrowser();
+            console.log('Browser Info:', browserInfo);
+            
+            // If in VS Code browser, automatically open in default browser
+            if (browserInfo.isVSCode) {
+                console.log('VS Code browser detected, opening print version in default browser');
+                const printUrl = '/print/{{ lesson.class_num }}/{{ lesson.chapter_num }}';
+                window.open(printUrl, '_blank');
+                return true;
+            }
+            
+            if (!browserInfo.canPrint) {
+                alert('Print function is not available in this environment.');
+                return false;
+            }
+            
+            try {
+                console.log('Attempting to call window.print()...');
+                window.print();
+                console.log('window.print() called successfully');
+                return true;
+            } catch (error) {
+                console.error('Print error:', error);
+                // Fallback: open print version
+                const printUrl = '/print/{{ lesson.class_num }}/{{ lesson.chapter_num }}';
+                window.open(printUrl, '_blank');
+                return false;
+            }
+        }
+        
+        // Alternative print methods
+        function forcePrint() {
+            console.log('Force print called');
+            
+            // Method 1: Direct window.print
+            if (typeof window.print === 'function') {
+                setTimeout(() => {
+                    window.print();
+                }, 500);
+                return;
+            }
+            
+            // Method 2: Create print event
+            try {
+                const printEvent = new Event('beforeprint');
+                window.dispatchEvent(printEvent);
+                window.print();
+            } catch (e) {
+                console.error('Force print failed:', e);
+            }
+        }
+        
+        // Open in new browser window for printing
+        function openInNewTabForPrint() {
+            console.log('Opening in new tab for printing');
+            const currentUrl = window.location.href;
+            const printUrl = currentUrl + '?print=true';
+            
+            // Try to open in new window/tab
+            const newWindow = window.open(currentUrl, '_blank', 'width=800,height=600');
+            
+            if (newWindow) {
+                // Wait a bit then try to print in the new window
+                setTimeout(() => {
+                    try {
+                        newWindow.print();
+                        newWindow.focus();
+                    } catch (e) {
+                        console.error('Could not print in new window:', e);
+                    }
+                }, 1000);
+            } else {
+                alert('Please allow pop-ups for this site, then try again.\\n\\nAlternatively:\\n1. Copy this URL: ' + currentUrl + '\\n2. Open it in your regular browser\\n3. Press Ctrl+P');
+            }
+        }
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('=== DOM Loaded ===');
+            detectBrowser();
+            
+            // Print button functionality
+            const printBtn = document.getElementById('printBtn');
+            const openTabBtn = document.getElementById('openInNewTab');
+            
+            if (printBtn) {
+                console.log('Print button found, adding event listeners');
+                
+                printBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    console.log('Print button clicked (addEventListener)');
+                    printPage();
+                });
+            } else {
+                console.error('Print button not found!');
+            }
+            
+            if (openTabBtn) {
+                openTabBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    console.log('Open in new tab button clicked');
+                    openInNewTabForPrint();
+                });
+            }
+            
+            // Keyboard shortcut for print
+            document.addEventListener('keydown', function(e) {
+                if (e.ctrlKey && e.key === 'p') {
+                    e.preventDefault();
+                    console.log('Ctrl+P pressed');
+                    printPage();
+                }
+            });
+            
+            // Auto-print if URL contains print parameter
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('print') === 'true') {
+                setTimeout(() => {
+                    console.log('Auto-printing due to URL parameter');
+                    printPage();
+                }, 1000);
+            }
+        });
+        
+        // Test functions
+        function testPrint() {
+            console.log('=== Test Print Called ===');
+            return printPage();
+        }
+        
+        function debugPrint() {
+            console.log('=== Debug Print Info ===');
+            console.log('window.print exists:', typeof window.print);
+            console.log('User agent:', navigator.userAgent);
+            console.log('Location:', window.location.href);
+            
+            try {
+                window.print();
+                console.log('Direct window.print() succeeded');
+            } catch (e) {
+                console.error('Direct window.print() failed:', e);
+            }
+        }
+    </script>
+</body>
+</html>
