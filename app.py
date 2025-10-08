@@ -179,6 +179,63 @@ def init_db():
 4. शब्द ज्ञान की जांच''')
     ]
     
+    # === Class 2 (सारंगी) Lesson Plans Auto-Generation (Chapters 1–26) ===
+    # Assumption: Academic months cycle April–February (excluding March) and reused if overflow.
+    sarangi_months = [
+        'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December', 'January', 'February'
+    ]
+
+    sarangi_titles = [
+        'हमारा विद्यालय', 'सुबह की सैर', 'मित्रता का मूल्य', 'प्रकृति के रंग', 'मेरे खिलौने', 'स्वच्छ रहो स्वस्थ रहो',
+        'बारिश आई', 'प्यारे पशु-पक्षी', 'त्योहारों की खुशियाँ', 'मेरी प्यारी किताब', 'पेड़ हमारा मित्र', 'मौसम बदलते हैं',
+        'सच्ची मदद', 'खेल-कूद का महत्व', 'मेरी दिनचर्या', 'ईमानदारी सबसे बड़ी नीति', 'फूलों की घाटी', 'चिड़ियाघर की सैर',
+        'माता-पिता का स्नेह', 'राष्ट्रीय प्रतीक', 'सुरक्षित रहें', 'स्वच्छ जल', 'ध्यान और योग', 'मज़ेदार कहानी', 'पर्वत और नदियाँ', 'नन्हे वैज्ञानिक'
+    ]
+
+    # Common template strings for Class 2 (simplified age-appropriate language)
+    lo_template = [
+        'सरल शब्दों और वाक्यों को पढ़कर अर्थ समझ सकेंगे',
+        'चित्र देखकर 2-3 वाक्य बोल सकेंगे',
+        'श्रवण के बाद मुख्य बात दोहरा सकेंगे',
+        'स्वच्छ एवं स्पष्ट लेखन का अभ्यास करेंगे',
+        'सहपाठियों के साथ सहयोगपूर्वक कार्य करेंगे'
+    ]
+    tp_template = [
+        'पाठ का शीर्षक और विषय परिचय', 'चित्र / फ्लैश कार्ड द्वारा शब्द परिचय', 'नई शब्दावली का उच्चारण अभ्यास',
+        'सरल वाक्य निर्माण', 'पठन (शिक्षक मॉडल + छात्र पठन)', 'श्रवण के बाद प्रश्नोत्तर',
+        'लेखन – 2 से 3 वाक्य', 'मूल्य / संदेश पर चर्चा', 'सफाई / अनुशासन का समावेश', 'पुनरावृत्ति एवं समापन'
+    ]
+    aids_template = [
+        'पाठ्यपुस्तक व चित्र कार्ड', 'श्यामपट्ट / चार्ट पेपर', 'फ्लैश कार्ड / वास्तविक वस्तुएँ'
+    ]
+    method_template = [
+        'संवाद एवं गतिविधि आधारित शिक्षण', 'प्रदर्शन एवं सहभागिता विधि'
+    ]
+    activity_template = 'समूह में चित्र देखकर 3 मौखिक वाक्य बनाना और कक्षा में साझा करना'
+    skill_practice_template = [
+        'पठन कौशल – बारी-बारी से पंक्तियों का वाचन', 'लेखन कौशल – 3 नए शब्दों से वाक्य लिखना'
+    ]
+    life_skill_template = 'सहयोग एवं स्वच्छता का व्यवहारिक अभ्यास'
+    assignment_template = 'नई सीखी 5 शब्द लिखें और प्रत्येक से एक छोटा वाक्य बनाएँ'
+    assessment_template = [
+        'मौखिक प्रश्नोत्तर द्वारा समझ जाँच', 'शब्द उच्चारण का अवलोकन', 'लेखन में शुद्धता और रिक्त स्थान भरना', 'गतिविधि में भागीदारी', 'गृहकार्य की समीक्षा'
+    ]
+
+    for idx, title in enumerate(sarangi_titles, start=1):
+        month = sarangi_months[(idx - 1) % len(sarangi_months)]
+        sample_lessons.append((
+            2, 'Hindi (सारंगी)', idx, title, month, 2025, f'पाठ {idx}',
+            '\n'.join(f"{i+1}. {pt}" for i, pt in enumerate(lo_template)),
+            '\n'.join(f"{i+1}. {pt}" for i, pt in enumerate(tp_template)),
+            '\n'.join(f"{i+1}. {pt}" for i, pt in enumerate(aids_template)),
+            '\n'.join(f"{i+1}. {pt}" for i, pt in enumerate(method_template)),
+            activity_template,
+            '\n'.join(f"{i+1}. {pt}" for i, pt in enumerate(skill_practice_template)),
+            life_skill_template,
+            assignment_template,
+            '\n'.join(f"{i+1}. {pt}" for i, pt in enumerate(assessment_template))
+        ))
+
     # Insert sample lessons
     for lesson in sample_lessons:
         cursor.execute('''
